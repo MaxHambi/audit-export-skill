@@ -30,6 +30,13 @@ except ImportError:
         "Fehler: Schwester-Skill 'session-audit' nicht gefunden (erwartet unter "
         "../session-audit/scripts/_common.py). Beide Skills zusammen installieren.")
 
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def scan_dir(d):
     sads, handoffs, sidecars, transcripts = [], [], [], []

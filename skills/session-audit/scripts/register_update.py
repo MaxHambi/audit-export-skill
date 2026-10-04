@@ -18,12 +18,21 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (  # noqa: E402
+
     extract_passport, find_register, normalize_keys, parse_range,
     parse_register_ranges, read_text,
 )
 
 BLOCK = {"E": 25, "A": 25, "R": 25, "Q": 200}
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def fmt_range(prefix, lo, hi):
     width = 3 if prefix == "Q" else 2

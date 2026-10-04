@@ -23,6 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (  # noqa: E402
+
     AGENT_CATEGORIES_DE, AGENT_CATEGORIES_EN, PASSPORT_REQUIRED,
     collect_ids, extract_passport, find_register, normalize_keys,
     parse_range, parse_register_ranges, read_text, secret_scan, usage_shares,
@@ -75,6 +76,14 @@ class Report:
         out.append(f"  → {len(self.errors)} ERROR, {len(self.warns)} WARN")
         return "\n".join(out)
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def check_passport(rep, data, raw_parser):
     if data is None:

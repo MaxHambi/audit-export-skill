@@ -30,6 +30,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+
 CATEGORIES = [
     "recherche", "coding", "dokumentation", "planung_architektur",
     "verifikation_testing", "kommunikation_orga", "sonstiges",
@@ -51,6 +52,14 @@ DEFAULT_MAPPING = {
                 "feature", "opencode", "zcode", "build", "commit", "pr-"],
 }
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def classify(trace: dict, mapping: dict) -> str:
     parts = [str(trace.get("name") or "")]

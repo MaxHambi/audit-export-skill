@@ -39,8 +39,17 @@ import subprocess
 import sys
 import tempfile
 
+
 VERSION = "0.9.0"
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def registry_path():
     """Zentrale Liste aller Installationsziele (für --update über Custom-Pfade).

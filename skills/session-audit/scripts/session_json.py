@@ -27,12 +27,21 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (  # noqa: E402
+
     collect_ids, extract_passport, normalize_keys, parse_range, read_text,
     section_lines, usage_shares,
 )
 
 SCHEMA_VERSION = "1.0"
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def sha256(path):
     h = hashlib.sha256()

@@ -40,12 +40,21 @@ import re
 import sys
 import urllib.parse
 
+
 SCHEMA = "transcript v1.0"
 ROLE_KEYS = ("role", "sender", "author", "from", "who", "type")
 TEXT_KEYS = ("content", "text", "message", "value", "body", "answer", "query")
 TIME_KEYS = ("created_at", "timestamp", "time", "date", "created", "add_date", "datetime")
 MODEL_KEYS = ("model", "model_name", "modelName", "chat_model")
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def sha256_file(path):
     h = hashlib.sha256()

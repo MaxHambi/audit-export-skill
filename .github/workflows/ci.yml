@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONIOENCODING: utf-8   # Windows-Runner nutzen sonst cp1252-Console (Unicode-Symbole!)
+  PYTHONUTF8: "1"
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true

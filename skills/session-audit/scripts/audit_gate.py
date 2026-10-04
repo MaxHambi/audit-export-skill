@@ -30,6 +30,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from _common import (  # noqa: E402
+
     extract_passport, normalize_keys, parse_register_ranges, read_text,
 )
 
@@ -37,6 +38,14 @@ _spec = importlib.util.spec_from_file_location("va", os.path.join(HERE, "validat
 va = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(va)
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def main():
     ap = argparse.ArgumentParser(

@@ -31,6 +31,7 @@ import os
 import re
 import sys
 
+
 ALLOWED_DIRS = {"scripts", "references", "assets", "evals"}
 NAME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 BODY_LINE_LIMIT = 500
@@ -40,6 +41,14 @@ COMPAT_LIMIT = 500
 KNOWN_FRONTMATTER = {"name", "description", "license", "compatibility", "metadata",
                      "allowed-tools"}
 
+
+# Windows-Konsolen (cp1252/etc.) koennen Symbole wie ✓⚠✗ nicht kodieren:
+# Ausgabe einheitlich auf UTF-8 erzwingen (Agenten- und CI-tauglich).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 def parse_frontmatter(text):
     m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
