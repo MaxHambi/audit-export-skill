@@ -7,7 +7,7 @@ vertrauliches Material. Deshalb gelten dieselben Regeln, die die Skills selbst v
 ## Secrets
 - **Niemals** Keys, Tokens, Passwörter oder personenbezogene Daten in Audits, Handoffs,
   Transkripten, `session.json` oder Commits ablegen.
-- `scripts/validate_audit.py` prüft auf gängige Secret-Muster (OpenAI/Anthropic-ähnliche
+- `skills/session-audit/scripts/validate_audit.py` prüft auf gängige Secret-Muster (OpenAI/Anthropic-ähnliche
   Keys, GitHub PAT, AWS, Google, JWT, PEM-Blöcke) und meldet sie als ERROR.
   `audit_gate.py` blockt darüber Merges/Pushes.
 - Langfuse-Keys gehören in die Umgebung (`LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`)
