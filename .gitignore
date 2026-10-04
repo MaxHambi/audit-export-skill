@@ -39,3 +39,6 @@ Thumbs.db
 
 # Diese Datei wird vor dem ersten Push gelöscht (nur für den Maintainer)
 GITHUB-SETUP.de.md
+
+# Selbstinstallations-Test-Artefakte (nie committen)
+tmp-*/
