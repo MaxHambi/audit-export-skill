@@ -40,6 +40,72 @@ import sys
 import tempfile
 
 VERSION = "0.9.0"
+
+
+def registry_path():
+    """Zentrale Liste aller Installationsziele (für --update über Custom-Pfade).
+
+    Reihenfolge = Suchreihenfolge in registry_load(); erster Eintrag ist das
+    Schreibziel. AUDIT_SKILLS_TARGETS überschreibt alles (Test/Sandbox/CI).
+    """
+    override = os.environ.get("AUDIT_SKILLS_TARGETS")
+    if override:
+        return os.path.abspath(os.path.expanduser(override))
+    return os.path.join(xdg_config(), "audit-export-skill", "targets.json")
+
+
+def registry_load():
+    entries = []
+    for cand in dict.fromkeys([
+        os.environ.get("AUDIT_SKILLS_TARGETS"),          # Test/Sandbox-Override
+        os.path.join(xdg_config(), "audit-export-skill", "targets.json"),
+        os.path.join(home(), ".audit-export-skill-targets.json"),  # Fallback ohne XDG
+        os.path.join(HERE, ".targets.json"),              # Paket-lokal (portabel)
+    ]):
+        if not cand:
+            continue
+        try:
+            with open(cand, encoding="utf-8") as fh:
+                doc = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        if isinstance(doc, list):
+            for e in doc:
+                if isinstance(e, str) and e not in entries:
+                    entries.append(e)
+    log("Ziel-Registry:", entries)
+    return entries
+
+
+def _registry_write(entries):
+    try:
+        parent = os.path.dirname(registry_path())
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        tmp = registry_path() + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as fh:
+            json.dump(entries, fh, ensure_ascii=False, indent=2)
+            fh.write("\n")
+        os.replace(tmp, registry_path())
+        return True
+    except OSError as exc:
+        log("Ziel-Registry nicht schreibbar:", exc)
+        return False
+
+
+def registry_add(target_dir):
+    """Idempotent: Ziel nur einmal aufnehmen; Schreibfehler sind nicht fatal."""
+    target_dir = os.path.abspath(target_dir)
+    entries = registry_load()
+    if target_dir in entries:
+        return
+    entries.append(target_dir)
+    _registry_write(entries)
+
+
+def registry_drop(target_dir):
+    target_dir = os.path.abspath(target_dir)
+    _registry_write([e for e in registry_load() if os.path.abspath(e) != target_dir])
 MANIFEST = ".audit-skills-install.json"
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEBUG = False
@@ -545,7 +611,7 @@ def install_ci(project_dir, dry):
     return done
 
 
-def write_manifest(dst_root, skills, dry):
+def write_manifest(dst_root, skills, dry, register_target=True):
     doc = {
         "installer_version": VERSION,
         "installed_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
@@ -560,6 +626,8 @@ def write_manifest(dst_root, skills, dry):
         with open(p, "w", encoding="utf-8") as fh:
             json.dump(doc, fh, ensure_ascii=False, indent=2)
             fh.write("\n")
+        if register_target:
+            registry_add(dst_root)
     return p
 
 
@@ -605,8 +673,14 @@ def do_install(targets, skills, with_ci, dry):
 
 
 def find_previous_installs():
+    """Installationsziele finden: Ziel-Registry (Custom-Pfade) + bekannte Orte.
+
+    Ein Ziel zählt nur, wenn dort ein Manifest liegt. Verwaiste Registry-Einträge
+    (Ordner gelöscht/verschoben) werden entfernt — idempotent.
+    """
     found = []
-    cands = []
+    registered = [os.path.abspath(x) for x in registry_load()]
+    cands = list(registered)
     for tg in TARGETS:
         try:
             d = tg["dir"]({"project_root": project_root()})
@@ -621,6 +695,7 @@ def find_previous_installs():
         if base:
             cands += [base, os.path.join(base, "skills"),
                       os.path.join(base, ".opencode", "skills")]
+    stale = []
     for d in dict.fromkeys(cands):
         mp = os.path.join(d, MANIFEST)
         if os.path.isfile(mp):
@@ -628,6 +703,12 @@ def find_previous_installs():
                 found.append((d, json.load(open(mp, encoding="utf-8"))))
             except Exception as exc:
                 log("Manifest unreadable", mp, exc)
+        elif d in registered:
+            stale.append(d)
+    if stale:
+        keep = [e for e in registry_load() if os.path.abspath(e) not in stale]
+        _registry_write(keep)
+        log("verwaiste Registry-Einträge entfernt:", stale)
     return found
 
 
@@ -797,6 +878,10 @@ def main(argv=None):
     ap.add_argument("--version", action="store_true", help="Version ausgeben / print version")
     ap.add_argument("--set-home", metavar="PFAD",
                     help="Ziel-Home-Verzeichnis überschreiben (Test/Sandbox) / override home")
+    ap.add_argument("--list-targets", action="store_true",
+                    help="bekannte Installationsziele auflisten / list known targets")
+    ap.add_argument("--forget-target", metavar="PFAD",
+                    help="Ziel aus der Registry entfernen (Dateien bleiben) / drop from registry")
     a = ap.parse_args(argv)
 
     global DEBUG, LANG
@@ -806,6 +891,21 @@ def main(argv=None):
         os.environ["AUDIT_SKILLS_HOME"] = os.path.abspath(os.path.expanduser(a.set_home))
     if a.version:
         print(VERSION)
+        return 0
+    if a.list_targets:
+        prev = find_previous_installs()
+        if not prev:
+            print(t("no_manifest", MANIFEST))
+            print(f"Ziel-Registry: {registry_path()}", file=sys.stderr)
+            return 1
+        for d, mf in prev:
+            print(f"{d}\tv{mf.get('installer_version', '?')}\t"
+                  f"{mf.get('installed_at', '?')}\t{','.join(sorted(mf.get('skills', {})))}")
+        return 0
+    if a.forget_target:
+        p = os.path.abspath(os.path.expanduser(a.forget_target))
+        registry_drop(p)
+        print(f"{p} aus Ziel-Registry entfernt (Dateien unverändert): {registry_path()}")
         return 0
     log("Argumente:", vars(a))
     print(f"{t('title')} v{VERSION} — {SKILLS_DIR}")

@@ -50,8 +50,16 @@ Der Installer erfasst installierte Agenten/CLIs (Claude Code, opencode, Hermes, 
 goose, ZCode, generische `skills/`-Ordner, Git-Projekte), bietet dazu passende Ziele
 **plus eigene Projektordner** als Mehrfachauswahl an (Leertaste = wählen, Enter =
 installieren) und kann die CI-Sperre (GitHub-Actions-Workflow + `pre-push`-Hook) in
-Git-Projekte installieren. Flags: `--doctor --dry-run --update --debug --lang de|en
---all --targets --non-interactive --no-ci`.
+Git-Projekte installieren.
+
+Jedes Ziel erhält ein Manifest (`.audit-skills-install.json`) und wird in einer
+Ziel-Registry geführt (`$XDG_CONFIG_HOME/audit-export-skill/targets.json`) — dadurch
+findet `--update` auch frei gewählte Ordner; verwaiste Einträge werden entfernt.
+
+Flags: `--doctor` (Umgebung, Skill-Integrität, Ziele, optionale Module) · `--dry-run` ·
+`--update` · `--debug` · `--lang de|en` · `--all` · `--targets id1,/pfad/zum/repo` ·
+`--non-interactive` · `--no-ci` · `--set-home` (Sandbox/Tests) · `--list-targets` ·
+`--forget-target PFAD` · `--version`.
 
 ## Chat-only-Fallback (kein Dateizugriff, kein Python)
 

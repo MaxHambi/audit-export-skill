@@ -40,7 +40,11 @@ pipx install audit-export-skill && audit-skills --doctor && audit-skills
 curl -L -o audit-skills.zip https://github.com/MaxHambi/audit-export-skill/releases/latest/download/audit-export-skill.zip && unzip audit-skills.zip && python3 audit-export-skill/install.py
 ```
 
-The installer detects installed agents/CLIs (Claude Code, opencode, Hermes, Codex CLI, goose, ZCode, generic `skills/` folders, Git projects), offers matching targets **plus custom folders** as a multi-select (Space = toggle, Enter = install), and can install the CI gate (GitHub Actions workflow + `pre-push` hook) into Git projects. Flags: `--doctor --dry-run --update --debug --lang de|en --all --targets --non-interactive --no-ci`.
+The installer detects installed agents/CLIs (Claude Code, opencode, Hermes, Codex CLI, goose, ZCode, generic `skills/` folders, Git projects), offers matching targets **plus custom folders** as a multi-select (Space = toggle, Enter = install), and can install the CI gate (GitHub Actions workflow + `pre-push` hook) into Git projects.
+
+Every target records a manifest (`.audit-skills-install.json`) and is registered in a target registry (`$XDG_CONFIG_HOME/audit-export-skill/targets.json`), so `--update` also finds custom folders; stale entries are dropped automatically.
+
+Flags: `--doctor` (environment, skill integrity, targets, optional modules) · `--dry-run` · `--update` · `--debug` · `--lang de|en` · `--all` · `--targets id1,/path/to/repo` · `--non-interactive` · `--no-ci` · `--set-home` (sandbox/tests) · `--list-targets` · `--forget-target PATH` · `--version`.
 
 ## Chat-only fallback (no file access, no Python)
 
