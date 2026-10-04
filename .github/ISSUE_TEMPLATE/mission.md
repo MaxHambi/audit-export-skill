@@ -1,8 +1,14 @@
-# Mission: <kurzer Titel>
+---
+name: Mission
+about: Einzelne Arbeitsmission mit Ziel, Akzeptanzkriterien und Definition of Done
+title: "Mission: "
+labels: ["mission"]
+---
 
-> Vorlage — als GitHub-Issue-Template (`​.github/ISSUE_TEMPLATE/mission.md`) oder
-> `docs/specs/mission-<id>.md` verwenden. Platzhalter ersetzen, Unklares als [OFFEN]
-> markieren. Mission-Größe: ½–2 Agent-Tage [SOFT-R].
+<!-- Platzhalter ersetzen, Unklares als [OFFEN] markieren.
+     Mission-Größe: ½–2 Agent-Tage [SOFT-R]; größer → in Unter-Missions teilen.
+     Dieselbe Vorlage liegt als Datei unter
+     skills/project-workflow/assets/mission-template.md (für docs/specs/). -->
 
 **Ziel:** <1–2 Sätze, Nutzerwert — was ist danach möglich, was vorher nicht ging?>
 **Mission-ID:** mission-<nn> (für Trace-Tagging: Langfuse sessionId/Tags)
