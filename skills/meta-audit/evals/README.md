@@ -15,7 +15,7 @@ Jede Testcase **zweimal** laufen lassen: mit Skill und ohne Skill (Baseline). Nu
 zeigt sich, ob der Skill Mehrwert bringt — nicht nur, ob die Ausgabe „gut aussieht".
 
 ```
-session-audit-workspace/
+meta-audit-workspace/
 └── iteration-1/
     ├── eval-1-normal-session/
     │   ├── with_skill/    → outputs/ · timing.json · grading.json
@@ -28,7 +28,7 @@ Ablauf je Durchlauf:
 1. **Frischer Kontext** — neue Sitzung/Subagent, kein Vorwissen aus der Skill-Entwicklung.
    Sonst misst du dein Gedächtnis, nicht den Skill.
 2. Prompt aus `evals.json` übergeben (mit `files`, falls angegeben) und den Skill-Pfad
-   mitgeben (`Skill path: <repo>/skills/session-audit`); für die Baseline derselbe Prompt
+   mitgeben (`Skill path: <repo>/skills/meta-audit`); für die Baseline derselbe Prompt
    **ohne** Skill-Pfad.
 3. Ausgaben nach `with_skill/outputs/` bzw. `without_skill/outputs/` schreiben lassen.
 4. `timing.json` sofort sichern (`total_tokens`, `duration_ms`) — die Werte stehen nur in
