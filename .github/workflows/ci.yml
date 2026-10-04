@@ -44,12 +44,15 @@ jobs:
           python skills/session-audit/scripts/transcript_export.py --selftest
 
       - name: Installer smoke tests
+        env:
+          AUDIT_SKILLS_TARGETS: ${{ runner.temp }}/audit-skills-targets.json
         run: |
           python install.py --version
           python install.py --doctor --lang de
           python install.py --doctor --lang en
           python install.py --dry-run --all --non-interactive --set-home ./tmp-home
           python install.py --non-interactive --targets ./tmp-target --set-home ./tmp-home
+          python install.py --list-targets --set-home ./tmp-home
           python install.py --update --dry-run --set-home ./tmp-home
 
       - name: Package build (wheel + sdist)
