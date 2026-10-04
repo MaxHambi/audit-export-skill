@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.eggs/
+
+# Test-/Arbeitsdaten ( Audit-Inhalte gehören NIE ins öffentliche Repo)
+docs/audit/
+*.local.md
+/tmp/
+/fixtures/
+session-*.json
+!skills/**/session.schema.json
+usage.json
+health-report-*.md
+transcripts/
+
+# Installer-Zustand
+.audit-skills-install.json
+
+# Secrets (HARD-R: niemals committen)
+.env
+*.pem
+*.key
+pat.txt
+token.txt
+.git-credentials
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Diese Datei wird vor dem ersten Push gelöscht (nur für den Maintainer)
+GITHUB-SETUP.de.md

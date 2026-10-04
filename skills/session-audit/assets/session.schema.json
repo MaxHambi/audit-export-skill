@@ -1,0 +1,422 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "session.schema.json",
+  "title": "Session Audit Sidecar (session.json)",
+  "description": "Maschinenlesbarer Zwilling des Sitzungs-Passes (Schema v1.3). Erzeugt mit skills/session-audit/scripts/session_json.py — nie von Hand pflegen; Single Source of Truth ist das SAD.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "session",
+    "status",
+    "gate",
+    "agent_usage",
+    "id_ranges",
+    "documents",
+    "registers",
+    "integrity"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "generator": {
+      "type": "string"
+    },
+    "session": {
+      "type": "object",
+      "required": [
+        "id",
+        "date",
+        "topic",
+        "participants"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^S\\d{2,}$"
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "topic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "participants": {
+          "type": "object",
+          "properties": {
+            "user": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            }
+          }
+        },
+        "chat_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "beratung",
+            "coding",
+            "research",
+            "dokumentation",
+            "mixed",
+            null
+          ]
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "thinking": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "mode": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "fast",
+                "deep",
+                "scientific",
+                null
+              ]
+            }
+          }
+        },
+        "model_config": {
+          "type": "object"
+        },
+        "output_defaults": {
+          "type": "object"
+        },
+        "files_touched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "final",
+        "entwurf",
+        "draft",
+        "notausgabe",
+        "emergency"
+      ]
+    },
+    "version": {
+      "type": "string"
+    },
+    "gate": {
+      "type": "object",
+      "required": [
+        "verdict"
+      ],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "GRUEN",
+            "GREEN",
+            "GELB",
+            "YELLOW",
+            "ROT",
+            "RED"
+          ]
+        },
+        "findings": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "agent_usage": {
+      "type": "object",
+      "required": [
+        "provenance",
+        "shares"
+      ],
+      "properties": {
+        "provenance": {
+          "type": "string",
+          "enum": [
+            "measured",
+            "estimated",
+            "mixed"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "metric": {
+          "type": "string",
+          "enum": [
+            "traces",
+            "tokens",
+            "cost"
+          ]
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "estimation_basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shares": {
+          "type": "object",
+          "required": [
+            "recherche",
+            "coding",
+            "dokumentation",
+            "planung_architektur",
+            "verifikation_testing",
+            "kommunikation_orga",
+            "sonstiges"
+          ],
+          "properties": {
+            "recherche": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "coding": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "dokumentation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "planung_architektur": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "verifikation_testing": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "kommunikation_orga": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "sonstiges": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            }
+          }
+        },
+        "raw_values": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "id_ranges": {
+      "type": "object",
+      "properties": {
+        "E": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "A": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "R": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "Q": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    },
+    "registers": {
+      "type": "object",
+      "properties": {
+        "decisions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "deviations": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rules_hard": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rules_soft": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sources": {
+          "type": "object",
+          "properties": {
+            "chat": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "internal": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "external": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "documents": {
+      "type": "object",
+      "required": [
+        "sad"
+      ],
+      "properties": {
+        "sad": {
+          "type": "string"
+        },
+        "handoff": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transcript": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role_summary": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "1-Zeilen-Kurzform der Rollenweisung; Volltext im SAD §2"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "unverified_markers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "open_markers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unclear_markers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_checkable_markers": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ids_used_in_body": {
+      "type": "object"
+    }
+  }
+}

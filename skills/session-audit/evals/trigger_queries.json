@@ -1,0 +1,84 @@
+{
+  "skill_name": "session-audit",
+  "note": "Trigger-Eval nach agentskills.io/optimizing-descriptions: 3 Läufe je Query, Trigger-Rate ≥0.5 = Pass (should) bzw. <0.5 = Pass (should-not). Split 60/40 train/validation.",
+  "queries": [
+    {
+      "id": 1,
+      "query": "Ich muss gleich los — kannst du alles Wichtige festhalten, damit ich morgen in der Handy-App weitermachen kann?",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 2,
+      "query": "Wechsle mal das Modell: gib mir nen Text den ich im anderen Chat einfügen kann damit der weiß wo wir stehen",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 3,
+      "query": "Ich möchte in 3 Monaten noch nachvollziehen können, warum wir uns damals für Option B entschieden haben",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 4,
+      "query": "Kontext sichern bevor das Fenster voll läuft",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 5,
+      "query": "Bitte audit this session and produce a handoff document",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 6,
+      "query": "Ach übrigens: ich habe meine Meinung geändert, statt Flutter nehmen wir jetzt KMP — das muss sauber dokumentiert werden",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 7,
+      "query": "Mach mir eine Übergabe fürs Wochenende, gleiche Regeln wie immer",
+      "should_trigger": true,
+      "split": "validation"
+    },
+    {
+      "id": 8,
+      "query": "Fasse bitte den Artikel über MobilePA-Bench zusammen",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 9,
+      "query": "Schreib eine Zusammenfassung des angehängten PDFs (30 Seiten)",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 10,
+      "query": "Review mal den Code in packages/core/src/auth.dart",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 11,
+      "query": "Prüfe ob unser Audit-System insgesamt noch gesund ist (Monatscheck)",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 12,
+      "query": "Erstelle einen Release-Plan für die Android-App",
+      "should_trigger": false,
+      "split": "validation"
+    },
+    {
+      "id": 13,
+      "query": "Was waren noch mal die Preise vom GLM Coding Plan?",
+      "should_trigger": false,
+      "split": "validation"
+    }
+  ]
+}

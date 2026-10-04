@@ -1,0 +1,59 @@
+#!/bin/sh
+# Audit-Gate als lokaler Git-Hook (pre-push) — Vorlage.
+#
+# Installation (im Projekt-Repo):
+#   mkdir -p .git/hooks
+#   cp skills/session-audit/assets/hooks/pre-push .git/hooks/pre-push
+#   chmod +x .git/hooks/pre-push
+#   git config hooks.auditGate true          # scharf schalten (Default: warn-only)
+#
+# Verhalten:
+#   - ohne git config hooks.auditGate=true  → nur Warnung, Push bleibt möglich
+#   - mit    git config hooks.auditGate=true → Push bei FAIL gesperrt
+#   - Überspringen im Notfall: git push --no-verify  (danach Begründung als A-xx
+#     im nächsten Audit dokumentieren — Historie wird nicht gelöscht, nur markiert)
+#
+# Pfade unten anpassen, falls die Skills nicht unter skills/ liegen.
+
+set -e
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+GATE="$REPO_ROOT/skills/session-audit/scripts/audit_gate.py"
+AUDIT_DIR="$REPO_ROOT/docs/audit"
+STRICT=$(git config --get hooks.auditGate 2>/dev/null || echo "false")
+
+if [ ! -f "$GATE" ]; then
+    echo "audit-gate: Skript nicht gefunden ($GATE) — Hook übersprungen."
+    exit 0
+fi
+
+if [ ! -d "$AUDIT_DIR" ]; then
+    echo "audit-gate: kein docs/audit/ — Hook übersprungen (noch kein Audit-System)."
+    exit 0
+fi
+
+PYTHON=$(command -v python3 || command -v python)
+if [ -z "$PYTHON" ]; then
+    echo "audit-gate: kein Python gefunden — Hook übersprungen."
+    exit 0
+fi
+
+echo "audit-gate: prüfe docs/audit/ …"
+if "$PYTHON" "$GATE" --audit-dir "$AUDIT_DIR" --register "$AUDIT_DIR/register.md" --max-age-days 30; then
+    echo "audit-gate: PASS"
+    exit 0
+fi
+
+STATUS=$?
+if [ "$STRICT" = "true" ]; then
+    echo ""
+    echo "audit-gate: FAIL — Push gesperrt (hooks.auditGate=true)."
+    echo "Befunde beheben, oder bewusst überspringen mit: git push --no-verify"
+    echo "(Übersprungene Gates im nächsten Sitzungs-Audit als A-xx dokumentieren.)"
+    exit 1
+fi
+
+echo ""
+echo "audit-gate: Befunde vorhanden, aber Push nicht gesperrt (warn-only)."
+echo "Scharfschalten mit: git config hooks.auditGate true"
+exit 0

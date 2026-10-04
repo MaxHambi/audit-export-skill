@@ -1,0 +1,29 @@
+{
+  "skill_name": "project-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Ich will endlich ein größeres Projekt (PC + Android, Monorepo) mit KI-Agenten bis zum Release bauen. Bisher immer im Chaos geendet. Wie gehen wir das an?",
+      "expected_output": "Strukturierter Plan nach den Prinzipien: Monorepo-Klarstellung (1 Repo, Packages), Missions-Workflow mit Spec/DoD, Cross-Family-Review, Walking-Skeleton als erste Mission, Framework-Spike mit ADR, Repo-Grundausstattung (AGENTS.md, docs/-Struktur, CI, Branch-Protection).",
+      "assertions": [
+        "Die Antwort empfiehlt EIN Monorepo mit Package-Grenzen (nicht mehrere Repos)",
+        "Walking Skeleton wird als erste kalibrierende Mission vorgeschlagen",
+        "Cross-Family-Review (Implementierung ≠ Verifier-Familie) ist enthalten",
+        "Missions-Größe ½–2 Tage und kleine PRs werden genannt",
+        "Es wird nicht sofort Code geschrieben, sondern Spec/Plan zuerst"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Die API-Kosten für meine Agent-Läufe explodieren. Was kann ich tun?",
+      "expected_output": "Routing-Empfehlung nach Modellklassen (Flash/Mittelklasse/Frontier), Token-Disziplin (AGENTS.md kurz, on-demand-Kontext, Kompaktieren, Caching), Messung pro Mission statt Raten.",
+      "assertions": [
+        "Modell-Routing nach Kritikalität wird empfohlen (nicht einfach 'billigeres Modell')",
+        "Mindestens 3 Token-Sparmaßnahmen werden konkret genannt",
+        "Messbarkeit (Tagging/Observability) wird als Voraussetzung genannt"
+      ],
+      "files": []
+    }
+  ]
+}

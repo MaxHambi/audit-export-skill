@@ -1,0 +1,69 @@
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag für Release-ZIP (z. B. v0.9.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate before release
+        run: |
+          python -m pip install --quiet pyyaml jsonschema hatchling
+          python scripts/validate_skills.py --skills-dir skills --strict
+          python skills/session-audit/scripts/validate_audit.py --selftest
+          python skills/session-audit/scripts/usage_from_langfuse.py --selftest
+          python skills/session-audit/scripts/transcript_export.py --selftest
+          python install.py --doctor
+
+      - name: Build wheel + sdist
+        run: python -m hatchling build
+
+      - name: Create release ZIP (skills + installer, ohne CI/Dev-Dateien)
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          STAGE="audit-export-skill"
+          mkdir -p "$STAGE"
+          cp -r install.py README.md README.de.md CHANGELOG.md LICENSE "$STAGE/"
+          cp -r skills scripts "$STAGE/"
+          find "$STAGE" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+          zip -qr "audit-export-skill-${TAG}.zip" "$STAGE"
+          cp "audit-export-skill-${TAG}.zip" audit-export-skill.zip
+          echo "ZIP: audit-export-skill-${TAG}.zip (+ latest-Kopie audit-export-skill.zip)"
+
+      - name: Create/Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          files: |
+            audit-export-skill-${{ steps.tag.outputs.tag }}.zip
+            audit-export-skill.zip
+            dist/*

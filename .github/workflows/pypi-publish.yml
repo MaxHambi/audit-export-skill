@@ -1,0 +1,45 @@
+# PyPI-Veröffentlichung via Trusted Publishing (OIDC) — kein Token im Repo nötig.
+# Voraussetzung: Auf pypi.org → Projekt → Settings → Trusted Publishers einen
+# Publisher anlegen (siehe GITHUB-SETUP.de.md, Schritt 5).
+name: pypi-publish
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate
+        run: |
+          python -m pip install --quiet pyyaml jsonschema hatchling
+          python scripts/validate_skills.py --skills-dir skills --strict
+          python install.py --doctor
+      - name: Build
+        run: python -m hatchling build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pypi-dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # OIDC für Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pypi-dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

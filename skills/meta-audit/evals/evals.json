@@ -1,0 +1,17 @@
+{
+  "skill_name": "meta-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Monatscheck: Prüfe unser Audit-System in docs/audit/ (enthält 3 SADs, 2 Handoffs, 1 Notausgabe, Register mit einer ID-Kollision).",
+      "expected_output": "Ampel-Gesundheitsbericht (audit_health.py) + vertiefte Stichprobe + paketierter Änderungsvorschlag; die ID-Kollision wird als ROT-Befund mit konkreter Behebung genannt.",
+      "assertions": [
+        "Der Report enthält die Ampel-Tabelle mit den Dimensionen aus CHECKLIST.md",
+        "Die Register-Kollision wird explizit benannt (Präfix + Sitzungs-IDs + Bereiche)",
+        "Die Notausgabe wird mit Blockadegründen nachverfolgt",
+        "Änderungsvorschläge sind als A-xx/R-xx-Entwürfe formuliert (human-gated), nicht direkt umgesetzt"
+      ],
+      "files": []
+    }
+  ]
+}

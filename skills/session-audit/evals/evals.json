@@ -1,0 +1,41 @@
+{
+  "skill_name": "session-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Unsere Sitzung ist fertig: Ich habe ein Budget von 100 €/Monat genannt, wir haben uns nach Vergleich auf Tool A geeinigt, dann habe ich meine Meinung geändert und Tool B gewählt ('nehme B, weil A zu teuer ist'), und du hast plan.md und setup.sh erstellt. Erstelle Audit und Handoff.",
+      "expected_output": "Zwei Markdown-Dokumente: SAD mit Sitzungs-Pass (YAML), Entscheidungsregister (mind. 2 E-xx), Abweichungs-Log mit A-01 (vorher→nachher, Zitat, Genehmigung), Quellenregister (Q-xx mit [CHAT]/[INTERN]-Referenzen), Anhang A (Inhalte kleiner Artefakte) und Anhang B (Transfer-Checkliste); Handoff abgeleitet, beginnend mit TL;DR und Rollenweisung.",
+      "assertions": [
+        "Der Abweichungs-Eintrag A-xx enthält das User-Zitat als Genehmigungsnachweis",
+        "Jede Entscheidung E-xx verweist auf mindestens eine Q-xx-Quelle",
+        "Das Artefakt setup.sh ist in Anhang A eingebettet oder mit Fundstelle referenziert",
+        "Der Handoff enthält keine Information, die nicht im SAD verankert ist",
+        "Beide Dokumente tragen dieselbe Sitzungs-ID und denselben Gate-Verdict"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Fasse die Sitzung zusammen. (Hinweis an den Prüfer: Der Verlauf enthält einen ungelösten Widerspruch — Budget wurde mit 100 € und später mit 250 € angegeben, ohne Abweichungs-Eintrag oder Auflösung.)",
+      "expected_output": "KEINE Dokumente. Stattdessen Blockade-Bericht: nummerierter Befund (WAS mit Referenz, WARUM problematisch, VORSCHLAG im Stil 'Lass uns die Budgetangabe erst auf einen sicheren Stand bringen').",
+      "assertions": [
+        "Gate-Verdict ist ROT",
+        "Es wird kein SAD/Handoff erzeugt",
+        "Der Blockade-Bericht nennt den konkreten Widerspruch mit Fundstelle",
+        "Der Bericht endet mit der Bitte um Klärung, nicht mit einer Zusammenfassung"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Erstelle das Audit für diese Sitzung; Langfuse ist nicht erreichbar.",
+      "expected_output": "SAD mit agent_nutzung.provenance=estimated und ausgefüllter schaetzgrundlage; der Fallback-Grund ist im Integritätsbericht/Anhang B vermerkt.",
+      "assertions": [
+        "provenance ist 'estimated' (nicht 'measured')",
+        "schaetzgrundlage ist nicht leer",
+        "validate_audit.py liefert keinen ERROR P6a/P6d"
+      ],
+      "files": []
+    }
+  ]
+}

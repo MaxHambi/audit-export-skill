@@ -1,0 +1,77 @@
+{
+  "skill_name": "project-workflow",
+  "queries": [
+    {
+      "id": 1,
+      "query": "Ich nehme mir mal wieder ein großes Projekt vor, diesmal mit Agenten — wie mache ich es richtig?",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 2,
+      "query": "Wir verlieren total den Überblick im Monorepo, jede Sitzung macht was anderes",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 3,
+      "query": "Plan the next feature properly: spec, acceptance criteria, tests",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 4,
+      "query": "Bereite den Release der Android-App vor, mit allem was dazugehört",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 5,
+      "query": "Soll ich das Package selbst schreiben oder gibt es was Fertiges? Und wie dokumentiere ich die Entscheidung?",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 6,
+      "query": "Meine letzten zwei KI-Projekte waren voller Fehler — was muss ich strukturell ändern?",
+      "should_trigger": true,
+      "split": "validation"
+    },
+    {
+      "id": 7,
+      "query": "Fasse die Sitzung zusammen und mach ein Handoff",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 8,
+      "query": "Was kostet GLM-5.3-Flash pro Million Tokens?",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 9,
+      "query": "Schreib mir eine Funktion die eine CSV einliest und sortiert",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 10,
+      "query": "Erkläre mir was ein ADR ist",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 11,
+      "query": "Prüfe das Audit-Register auf Kollisionen",
+      "should_trigger": false,
+      "split": "validation"
+    },
+    {
+      "id": 12,
+      "query": "Installier mir die Skills in Claude Code",
+      "should_trigger": false,
+      "split": "validation"
+    }
+  ]
+}

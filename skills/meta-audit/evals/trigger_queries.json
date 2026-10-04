@@ -1,0 +1,65 @@
+{
+  "skill_name": "meta-audit",
+  "queries": [
+    {
+      "id": 1,
+      "query": "Zeit für den monatlichen Meta-Audit",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 2,
+      "query": "Funktioniert unser Audit-System eigentlich noch? Mach mal nen Harness-Check",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 3,
+      "query": "In den letzten Sitzungen gab es zwei Gate-Abbrüche — schau dir bitte an ob das System klemmt",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 4,
+      "query": "Run a health check over docs/audit and the register",
+      "should_trigger": true,
+      "split": "train"
+    },
+    {
+      "id": 5,
+      "query": "Sind die HARD-R/SOFT-R-Einstufungen noch aktuell? Quartalsprüfung",
+      "should_trigger": true,
+      "split": "validation"
+    },
+    {
+      "id": 6,
+      "query": "Fasse diese Sitzung als Audit zusammen",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 7,
+      "query": "Erstelle SAD und Handoff für heute",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 8,
+      "query": "Validiere session-S03.json gegen das Schema",
+      "should_trigger": false,
+      "split": "train"
+    },
+    {
+      "id": 9,
+      "query": "Plane die nächste Mission im Projekt",
+      "should_trigger": false,
+      "split": "validation"
+    },
+    {
+      "id": 10,
+      "query": "Warum wurde damals eigentlich Option B gewählt?",
+      "should_trigger": false,
+      "split": "validation"
+    }
+  ]
+}
